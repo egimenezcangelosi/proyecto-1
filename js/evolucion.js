@@ -223,19 +223,6 @@ d3.select("#apply-filters-and-restart-button").on("click", function() {
   showFilterInputs();
 });
 
-const burger = d3.select(".burger i");
-const nav = d3.select(".nav");
-
-function toggleNav() {
-  burger.classList.toggle("fa-bars");
-  burger.classList.toggle("fa-times");
-  nav.classList.toggle("nav-active");
-}
-
-burger.on("click", function() {
-  toggleNav();
-});
-
 function TimeLapseChart(chartId) {
   const chartSettings = {
     width: 700,

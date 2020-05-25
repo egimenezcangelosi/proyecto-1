@@ -22,21 +22,23 @@ var svg = d3
 
 //Sets the projection for the map draw
 var path = d3.geoPath().projection(projection);
-
 svg.attr("d", path);
-
-//loads the map cordinates from the json file
-d3.json("/data/argentina_indec.json")
-  .then(d3.csv("/data/affectedtotals.csv", readCsv))
-  .then(drawMap)
-  .then(buildTable)
-  .then(showMapDiv);
 
 var covidAffectedTotals = [];
 
-function readCsv(d) {
-  covidAffectedTotals.push(d);
-}
+//default bubbles type is infected
+var bubblesType = "infected";
+
+//loads the map cordinates from the json file
+d3.json("/data/argentina_indec.json")
+  .then(drawMap)
+  .then(
+    d3
+      .csv("/data/affectedtotals.csv", readCsv)
+      .then(buildTable)
+      .then(drawBubbles)
+  )
+  .then(showMapDiv);
 
 //topojson is the library im using to render the map
 function drawMap(mapData) {
@@ -47,13 +49,45 @@ function drawMap(mapData) {
     .append("path")
     .attr("d", path)
     .attr("class", "land");
-
-  //draws bubbles of info over the recently drawn map
-  //default bubbles type is infected
-  drawBubbles("infected");
 }
 
-function drawBubbles(bubblesType) {
+function readCsv(d) {
+  covidAffectedTotals.push(d);
+}
+
+function buildTable() {
+  const tableContainer = d3.select("#table-div-container");
+  const table = tableContainer.append("table");
+  const thead = table.append("thead");
+  const headRow = thead.append("tr");
+  headRow.attr("class", "titles");
+  const titles = ["Provincia", "Infectados", "Recuperados", "Fallecidos"];
+  titles.forEach(function(t, i) {
+    var tdata = headRow.append("td").text(t);
+    if (i > 0) tdata.attr("class", "vertical");
+  });
+  const tbody = table.append("tbody");
+  covidAffectedTotals.forEach(function(data, i) {
+    var row = tbody.append("tr");
+    row.attr("class", "datarow");
+    row.append("td").text(data.name);
+    row
+      .append("td")
+      .text(data.infected)
+      .attr("class", "infected");
+    row
+      .append("td")
+      .text(data.recovered)
+      .attr("class", "recovered");
+    row
+      .append("td")
+      .text(data.dead)
+      .attr("class", "dead");
+  });
+}
+
+//draws bubbles of info over the map
+function drawBubbles() {
   //tooltip box
   var tooltip = d3.select(".tooltip");
 
@@ -123,63 +157,22 @@ function drawBubbles(bubblesType) {
 
 //draws infected type bubbles over the map
 d3.select("#infected-button").on("click", function() {
-  drawBubbles("infected");
+  bubblesType = "infected";
+  drawBubbles();
 });
 
 //draws dead type bubbles over the map
 d3.select("#dead-button").on("click", function() {
-  drawBubbles("dead");
+  bubblesType = "dead";
+  drawBubbles();
 });
 
 //draws recpvered type bubbles over the map
 d3.select("#recovered-button").on("click", function() {
-  drawBubbles("recovered");
+  bubblesType = "recovered";
+  drawBubbles();
 });
 
 function showMapDiv() {
-  d3.select("#map-div-container").attr("class", null);
+  d3.select("#map-div-wrapper").attr("class", null);
 }
-
-function buildTable() {
-  const tableContainer = d3.select("#table-div-container");
-  const table = tableContainer.append("table");
-  const thead = table.append("thead");
-  const headRow = thead.append("tr");
-  headRow.attr("class", "titles");
-  const titles = ["Provincia", "Infectados", "Recuperados", "Fallecidos"];
-  titles.forEach(function(t, i) {
-    var tdata = headRow.append("td").text(t);
-    if (i > 0) tdata.attr("class", "vertical");
-  });
-  const tbody = table.append("tbody");
-  covidAffectedTotals.forEach(function(data, i) {
-    var row = tbody.append("tr");
-    row.attr("class", "datarow");
-    row.append("td").text(data.name);
-    row
-      .append("td")
-      .text(data.infected)
-      .attr("class", "infected");
-    row
-      .append("td")
-      .text(data.recovered)
-      .attr("class", "recovered");
-    row
-      .append("td")
-      .text(data.dead)
-      .attr("class", "dead");
-  });
-}
-
-const burger = d3.select(".burger i");
-const nav = d3.select(".nav");
-
-function toggleNav() {
-  burger.classList.toggle("fa-bars");
-  burger.classList.toggle("fa-times");
-  nav.classList.toggle("nav-active");
-}
-
-burger.on("click", function() {
-  toggleNav();
-});
