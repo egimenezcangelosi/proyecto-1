@@ -27,9 +27,16 @@ svg.attr("d", path);
 
 //loads the map cordinates from the json file
 d3.json("/data/argentina_indec.json")
+  .then(d3.csv("/data/affectedtotals.csv", readCsv))
   .then(drawMap)
   .then(buildTable)
   .then(showMapDiv);
+
+var covidAffectedTotals = [];
+
+function readCsv(d) {
+  covidAffectedTotals.push(d);
+}
 
 //topojson is the library im using to render the map
 function drawMap(mapData) {
@@ -47,34 +54,6 @@ function drawMap(mapData) {
 }
 
 function drawBubbles(bubblesType) {
-  //bubbles position
-  var bubbles = [
-    { x: 350, y: 350, id: 0 },
-    { x: 308, y: 403, id: 1 },
-    { x: 315, y: 135, id: 2 },
-    { x: 235, y: 280, id: 3 },
-    { x: 150, y: 507, id: 4 },
-    { x: 300, y: 240, id: 5 },
-    { x: 160, y: 880, id: 6 },
-    { x: 101, y: 455, id: 7 },
-    { x: 130, y: 345, id: 8 },
-    { x: 380, y: 195, id: 9 },
-    { x: 158, y: 209, id: 10 },
-    { x: 110, y: 725, id: 11 },
-    { x: 197, y: 140, id: 12 },
-    { x: 340, y: 285, id: 13 },
-    { x: 460, y: 150, id: 14 },
-    { x: 245, y: 165, id: 15 },
-    { x: 180, y: 310, id: 16 },
-    { x: 180, y: 27, id: 17 },
-    { x: 190, y: 415, id: 18 },
-    { x: 210, y: 95, id: 19 },
-    { x: 130, y: 600, id: 20 },
-    { x: 120, y: 250, id: 21 },
-    { x: 330, y: 84, id: 22 },
-    { x: 149, y: 140, id: 23 }
-  ];
-
   //tooltip box
   var tooltip = d3.select(".tooltip");
 
@@ -85,12 +64,8 @@ function drawBubbles(bubblesType) {
 
   //sets the tooltip box text and position
   //tooltip position depends on mouse cursor position
-  var mousemove = function(b) {
-    tooltip.html(
-      covidAffectedTotals[b.id]["name"] +
-        "<br> cantidad: " +
-        covidAffectedTotals[b.id][bubblesType]
-    );
+  var mousemove = function(bubble) {
+    tooltip.html(bubble["name"] + "<br> cantidad: " + bubble[bubblesType]);
 
     tooltip
       .style("top", event.pageY + "px")
@@ -98,7 +73,7 @@ function drawBubbles(bubblesType) {
   };
 
   //hides the tooltip box
-  var mouseleave = function(b) {
+  var mouseleave = function() {
     tooltip.attr("class", "tooltip");
   };
 
@@ -128,53 +103,23 @@ function drawBubbles(bubblesType) {
   //draws the new bubbles
   svg
     .selectAll("bubbles")
-    .data(bubbles) //contains position and id data
+    .data(covidAffectedTotals)
     .enter()
     .append("circle")
-    .attr("cx", function(b) {
-      return b.x;
+    .attr("cx", function(bubble) {
+      return bubble.mapposx;
     })
-    .attr("cy", function(b) {
-      return b.y;
+    .attr("cy", function(bubble) {
+      return bubble.mapposy;
     })
-    .attr("r", function(b) {
-      return bubbleSize(
-        covidAffectedTotals[b.id][bubblesType],
-        maxValue(bubblesType)
-      );
+    .attr("r", function(bubble) {
+      return bubbleSize(bubble[bubblesType], maxValue(bubblesType));
     })
     .attr("class", "bubbles bubbles-" + bubblesType)
     .on("mouseover", mouseover)
     .on("mousemove", mousemove)
     .on("mouseleave", mouseleave);
 }
-
-var covidAffectedTotals = [
-  { name: "CABA", infected: 2464, recovered: 640, dead: 106 },
-  { name: "Buenos Aires", infected: 2332, recovered: 497, dead: 133 },
-  { name: "Chaco", infected: 504, recovered: 75, dead: 23 },
-  { name: "Córdoba", infected: 361, recovered: 70, dead: 24 },
-  { name: "Río Negro", infected: 294, recovered: 130, dead: 11 },
-  { name: "Santa Fe", infected: 244, recovered: 164, dead: 3 },
-  { name: "Tierra del Fuego", infected: 148, recovered: 77, dead: 0 },
-  { name: "Neuquén", infected: 113, recovered: 39, dead: 5 },
-  { name: "Mendoza", infected: 88, recovered: 30, dead: 9 },
-  { name: "Corrientes", infected: 76, recovered: 33, dead: 0 },
-  { name: "La Rioja", infected: 60, recovered: 2, dead: 7 },
-  { name: "Santa Cruz", infected: 49, recovered: 30, dead: 0 },
-  { name: "Tucumán", infected: 42, recovered: 20, dead: 4 },
-  { name: "Entre Ríos", infected: 29, recovered: 17, dead: 0 },
-  { name: "Misiones", infected: 25, recovered: 6, dead: 1 },
-  { name: "Santiago del Estero", infected: 16, recovered: 11, dead: 0 },
-  { name: "San Luis", infected: 11, recovered: 7, dead: 0 },
-  { name: "Jujuy", infected: 5, recovered: 4, dead: 0 },
-  { name: "La Pampa", infected: 5, recovered: 5, dead: 0 },
-  { name: "Salta", infected: 5, recovered: 3, dead: 0 },
-  { name: "Chubut", infected: 4, recovered: 0, dead: 0 },
-  { name: "San Juan", infected: 3, recovered: 2, dead: 0 },
-  { name: "Formosa", infected: 0, recovered: 0, dead: 0 },
-  { name: "Catamarca", infected: 0, recovered: 0, dead: 0 }
-];
 
 //draws infected type bubbles over the map
 d3.select("#infected-button").on("click", function() {
