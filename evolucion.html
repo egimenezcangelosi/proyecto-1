@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <title>COVID-19 ARGENTINA</title>
+    <meta charset="UTF-8" />
+    <link href="/css/styles.css" rel="stylesheet" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.2/css/all.min.css"
+    />
+    <script src="https://d3js.org/d3.v5.min.js" charset="utf-8"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.css"
+    />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+  </head>
+
+  <body>
+    <header>
+      <img src="/img/logotitle.svg" id="logotitle" alt="COVID-19 ARGENTINA" />
+      <ul class="nav">
+        <li class="navlink"><a href="index.html">MAPA</a></li>
+        <li class="navlink"><a href="evolucion.html">EVOLUCION</a></li>
+        <li class="navlink"><a href="#">RECOMENDACIONES</a></li>
+        <li class="navlink"><a href="#">SINTOMAS</a></li>
+        <li class="navlink"><a href="#">Nº DE CONTACTO</a></li>
+      </ul>
+      <div id="style-toggler-container">
+        <input
+          type="checkbox"
+          class="style-toggler-checkbox"
+          id="style-toggler"
+        />
+        <label class="style-toggler-label" for="style-toggler">
+          <i class="fas fa-moon"></i>
+          <i class="fas fa-sun"></i>
+          <span class="style-toggler-ball"></span>
+        </label>
+      </div>
+    </header>
+    <div id="container">
+      <div id="center">
+        <div id="timelapse-chart-div-wrapper">
+          <div id="filters-div-container" class="hidden">
+            <fieldset id="provinces-picker-div-container">
+              <legend class="filters-legend">
+                Filtrar por provincias:
+              </legend>
+            </fieldset>
+            <fieldset id="date-picker-div-container">
+              <legend class="filters-legend">Filtrar por fecha:</legend>
+              <label for="startdate" class="dateInputLabel">
+                Fecha de inicio:
+              </label>
+              <input id="startdate" type="text" class="date" />
+              <br />
+              <br />
+              <label for="enddate" class="dateInputLabel">
+                Fecha de finalización:
+              </label>
+              <input id="enddate" type="text" class="date" />
+            </fieldset>
+            <div id="filter-buttons-div-container">
+              <button id="pause-button" class="button">Pausar</button>
+              <button id="apply-filters-and-restart-button" class="button">
+                Aplicar
+              </button>
+            </div>
+          </div>
+          <div id="timelapse-chart-div-container"></div>
+        </div>
+      </div>
+    </div>
+    <!-- JavaScript -->
+    <script src="/js/theme.js"></script>
+    <script src="/js/evolucion.js"></script>
+  </body>
+</html>

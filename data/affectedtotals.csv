@@ -1,0 +1,25 @@
+name,mapposx,mapposy,infected,recovered,dead
+CABA,350,350,5875,1541,162
+Buenos Aires,308,403,4220,906,186
+Chaco,315,135,757,75,44
+Córdoba,235,280,459,93,30
+Río Negro,150,507,356,227,17
+Santa Fe,300,240,259,164,3	
+Tierra del Fuego,160,880,148,77,0
+Neuquén,101,455,116,39,5
+Mendoza,130,345,90,30,9
+Corrientes,380,195,78,34,0
+La Rioja,158,209,63,3,7
+Santa Cruz,110,725,49,30,0
+Tucumán,197,140,47,20,4
+Entre Ríos,340,275,30,17,0
+Misiones,460,150,25,6,1
+Santiago del Estero,245,165,22,11,0
+San Luis,180,310,11,7,0
+Salta,210,95,7,3,0
+La Pampa,190,415,5,5,0
+Jujuy,180,27,5,4,0
+San Juan,120,250,4,2,0
+Chubut,130,600,4,0,0
+Formosa,330,84,0,0,0
+Catamarca,149,140,0,0,0

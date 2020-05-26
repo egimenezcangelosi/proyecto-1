@@ -1,18 +1,56 @@
-<!doctype html>
-<html>
+<!DOCTYPE html>
+<html lang="es">
   <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-
-    <!-- CSS -->
-    <link rel="stylesheet" href="css/app.css">
-
-    <title>Proyecto 1</title>
+    <title>COVID-19 ARGENTINA</title>
+    <meta charset="UTF-8" />
+    <link href="/css/styles.css" rel="stylesheet" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.2/css/all.min.css"
+    />
+    <script src="https://d3js.org/d3.v5.min.js"></script>
+    <script src="https://unpkg.com/topojson@3"></script>
   </head>
   <body>
-    <h1>Proyecto 1</h1>
-
+    <header>
+      <img src="/img/logotitle.svg" id="logotitle" alt="COVID-19 ARGENTINA" />
+      <ul class="nav">
+        <li class="navlink"><a href="index.html">MAPA</a></li>
+        <li class="navlink"><a href="evolucion.html">EVOLUCION</a></li>
+        <li class="navlink"><a href="#">RECOMENDACIONES</a></li>
+        <li class="navlink"><a href="#">SINTOMAS</a></li>
+        <li class="navlink"><a href="#">Nº DE CONTACTO</a></li>
+      </ul>
+      <div id="style-toggler-container">
+        <input
+          type="checkbox"
+          class="style-toggler-checkbox"
+          id="style-toggler"
+        />
+        <label class="style-toggler-label" for="style-toggler">
+          <i class="fas fa-moon"></i>
+          <i class="fas fa-sun"></i>
+          <span class="style-toggler-ball"></span>
+        </label>
+      </div>
+    </header>
+    <div id="container">
+      <div id="center">
+        <div id="map-div-wrapper" class="hidden">
+          <div id="map-div-container">
+            <div id="map-buttons-div-container">
+              <button id="infected-button">Infectados</button>
+              <button id="dead-button">Fallecidos</button>
+              <button id="recovered-button">Recuperados</button>
+            </div>
+            <div class="tooltip"></div>
+          </div>
+          <div id="table-div-container"></div>
+        </div>
+      </div>
+    </div>
     <!-- JavaScript -->
-    <script src="js/app.js"></script>
+    <script src="/js/theme.js"></script>
+    <script src="/js/index.js"></script>
   </body>
 </html>
