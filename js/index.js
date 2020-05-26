@@ -27,7 +27,15 @@ svg.attr("d", path);
 var covidAffectedTotals = [];
 
 //default bubbles type is infected
-var bubblesType = "infected";
+var bubblesType = getFromLocalstorage("BubblesType", "infected");
+
+function getFromLocalstorage(key, defaultValue) {
+  var value = localStorage.getItem(key);
+  if (value === null) {
+    return defaultValue;
+  }
+  return value;
+}
 
 //loads the map cordinates from the json file
 d3.json("/data/argentina_indec.json")
@@ -88,6 +96,9 @@ function buildTable() {
 
 //draws bubbles of info over the map
 function drawBubbles() {
+  //save chosen bubblesType
+  localStorage.setItem("BubblesType", bubblesType);
+
   //tooltip box
   var tooltip = d3.select(".tooltip");
 

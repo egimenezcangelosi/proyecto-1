@@ -431,9 +431,12 @@ header {
 
 .date {
   height: 30px;
-  width: 100%;
+  width: 95%;
   border: 1px solid #d6d6d6;
   background-color: var(--color-background-input);
+  color: var(--color-fonts);
+  font-size: 14px;
+  padding-left: 5%;
 }
 
 #style-toggler-container {

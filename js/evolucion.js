@@ -2,6 +2,21 @@ const chartContainer = d3.select("#timelapse-chart-div-container");
 
 var timeLapseChart;
 
+const defaultStartDate = "04-03-2020";
+const defaultEndDate = dateToString(new Date());
+
+//transforms date into string date format "dd-mm-yyyy"
+function dateToString(date) {
+  var month = "" + (date.getMonth() + 1),
+    day = "" + date.getDate(),
+    year = date.getFullYear();
+
+  if (month.length < 2) month = "0" + month;
+  if (day.length < 2) day = "0" + day;
+
+  return [day, month, year].join("-");
+}
+
 //loads the timelapse chart data from data.csv
 d3.csv("/data/data.csv", readCsv)
   .then(parseData)
@@ -15,7 +30,7 @@ function readCsv(d) {
   data.push(d);
 }
 
-var columnNames = [
+const columnNames = [
   "BUENOS AIRES",
   "CABA",
   "CHACO",
@@ -44,6 +59,8 @@ var columnNames = [
 
 //generates province's checkbox inputs and date inputs for filtering the timelapse chart
 function generateFilterInputs() {
+  //get filters info from local storage
+  const filters = getFilters();
   const inputsContainer = d3.select("#provinces-picker-div-container");
   columnNames.forEach(function(n, i) {
     inputsContainer
@@ -53,7 +70,7 @@ function generateFilterInputs() {
       .attr("name", "province" + i)
       .attr("value", n)
       .attr("class", "provinceInput")
-      .property("checked", true);
+      .property("checked", filters["provincesFilter"][n]);
     inputsContainer
       .append("label")
       .attr("for", "province" + i)
@@ -115,20 +132,22 @@ function generateFilterInputs() {
       yearSuffix: ""
     };
 
+    var startDate = filters["startDate"];
+    var endDate = filters["endDate"];
+
     $.datepicker.setDefaults(defaults);
     $("#startdate")
-      .datepicker()
-      .on("input click", function(e) {
-        console.log("Fecha salida cambiada: ", e.target.value);
-      });
+      .datepicker({
+        maxDate: new Date()
+      })
+      .val(startDate);
 
     $("#enddate")
       .datepicker()
-      .on("input click", function(e) {
-        console.log("Fecha salida cambiada: ", e.target.value);
-      });
+      .val(endDate);
   });
 }
+
 //nest transforms plain csv data into an object and key groups that data by date
 function parseData() {
   data = d3
@@ -139,13 +158,37 @@ function parseData() {
     .entries(data);
 }
 
-function drawchart(drawData = data) {
+//draws the timelapse chart
+function drawchart() {
+  const filters = getFilters();
+  const drawData = filterData(
+    filters["startDate"],
+    filters["endDate"],
+    filters["provincesFilter"]
+  );
   timeLapseChart = new TimeLapseChart("timelapse-chart");
   timeLapseChart
     .setTitle("COVID-19 ARGENTINA - EVOLUCIÓN EN EL TIEMPO")
     .setColumnsStyles(columnNames)
     .addDatasets(drawData)
     .render();
+}
+
+//get filtes from local storage. if there is no data of filters in the local storage it returns default values
+function getFilters() {
+  var filtersData = localStorage.getItem("TimeLapseFiltersData");
+  if (filtersData != null) {
+    return JSON.parse(filtersData);
+  } else {
+    return {
+      startDate: defaultStartDate,
+      endDate: defaultEndDate,
+      provincesFilter: columnNames.reduce(function(acc, curr) {
+        acc[curr] = true;
+        return acc;
+      }, {})
+    };
+  }
 }
 
 //creates basic html structure (svg and groups) when timelapse chart will be draw
@@ -191,37 +234,54 @@ function stringToDate(stringDate) {
 
 //applies filters to data set and redraws the timelapse chart
 d3.select("#apply-filters-and-restart-button").on("click", function() {
-  var startDate = stringToDate(d3.select("#startdate").node().value);
-  var endDate = stringToDate(d3.select("#enddate").node().value);
+  var startDate = d3.select("#startdate").node().value;
+  var endDate = d3.select("#enddate").node().value;
 
-  var provincesFilter = [];
+  var provincesFilter = {};
   for (let i = 0; i < columnNames.length; i++) {
     var inputCheck = d3.select("#province" + i);
+    var province = columnNames[i];
     if (inputCheck.property("checked")) {
-      provincesFilter.push(inputCheck.attr("value"));
-    }
+      provincesFilter[province] = true;
+    } else provincesFilter[province] = false;
   }
 
-  var filteredData = [];
+  var filtersData = {
+    startDate: startDate,
+    endDate: endDate,
+    provincesFilter: provincesFilter
+  };
 
-  data.forEach(dailyData => {
-    let filteredDailyData = dailyData.values.filter(row =>
-      provincesFilter.includes(row.name)
-    );
-
-    var date = stringToDate(dailyData.key);
-
-    if (filteredDailyData.length > 0 && date >= startDate && date <= endDate) {
-      filteredData.push({ key: dailyData.key, values: filteredDailyData });
-    }
-  });
+  //save filters data into localStorage
+  localStorage.setItem("TimeLapseFiltersData", JSON.stringify(filtersData));
 
   timeLapseChart.stop();
   clear();
   addTimeLapseChartSvg();
-  drawchart(filteredData);
+  drawchart();
   showFilterInputs();
 });
+
+//applies filters to data set
+function filterData(startDate, endDate, provincesFilter) {
+  var sDate = stringToDate(startDate);
+  var eDate = stringToDate(endDate);
+
+  var filteredData = [];
+  data.forEach(dailyData => {
+    let filteredDailyData = dailyData.values.filter(
+      row => provincesFilter[row.name]
+    );
+
+    var date = stringToDate(dailyData.key);
+
+    if (filteredDailyData.length > 0 && date >= sDate && date <= eDate) {
+      filteredData.push({ key: dailyData.key, values: filteredDailyData });
+    }
+  });
+
+  return filteredData;
+}
 
 function TimeLapseChart(chartId) {
   const chartSettings = {
