@@ -339,7 +339,7 @@ table td:last-child {
   border: 1px solid #d6d6d6;
 }
 
-#provinces-picker-title {
+.filters-legend {
   margin-bottom: 10px;
 }
 
