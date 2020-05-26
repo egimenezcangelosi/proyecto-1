@@ -130,7 +130,7 @@ function drawBubbles() {
       var scale = d3
         .scaleLinear()
         .domain([1, maxValue]) // data range
-        .range([5, 60]); // bubble range
+        .range([5, 69]); // bubble range
       size = scale(value);
     }
     return size;
