@@ -1,9 +1,30 @@
 html,
 body {
   font-family: "Segoe UI", "Helvetica";
-  background-color: white;
+  background-color: var(--color-background);
+  color: var(--color-fonts);
   padding: 0px;
   margin: 0px 0px 30px 0px;
+}
+
+.light-theme {
+  --color-background: white;
+  --color-fonts: black;
+  --color-rect-border: black;
+  --color-background-input: white;
+  --color-background-hover-row: rgba(252, 155, 0, 0.11);
+  --color-background-hover-button: #cccccc;
+  --color-background-button: #ececec;
+}
+
+.dark-theme {
+  --color-background: #181818;
+  --color-fonts: #f2f1ec;
+  --color-rect-border: white;
+  --color-background-input: #070707;
+  --color-background-hover-row: rgb(214, 153, 84);
+  --color-background-hover-button: rgb(70, 70, 70);
+  --color-background-button: rgb(50, 50, 50);
 }
 
 button {
@@ -13,6 +34,13 @@ button {
   box-shadow: none;
   outline: none;
   cursor: pointer;
+  border: none;
+  color: var(--color-fonts);
+  background-color: var(--color-background-button);
+}
+
+button:hover {
+  background-color: var(--color-background-hover-button);
 }
 
 .hidden {
@@ -21,7 +49,7 @@ button {
 
 .timelapse-chart-container .timelapse-chart-title {
   font-size: 18px;
-  fill: black;
+  fill: var(--color-fonts);
   text-anchor: middle;
 }
 
@@ -42,7 +70,7 @@ button {
 }
 
 .x-axis .tick text {
-  color: black;
+  color: var(--color-fonts);
 }
 
 .columns .column-container .column-rect {
@@ -50,7 +78,7 @@ button {
 }
 
 .column-rect:hover {
-  stroke: black;
+  stroke: var(--color-rect-border);
   stroke-width: 1;
 }
 
@@ -131,7 +159,7 @@ button {
 }
 
 .col19 {
-  fill: #1a1a1a;
+  fill: #2d4b50;
 }
 
 .col20 {
@@ -151,17 +179,18 @@ button {
 }
 
 .tick:not(:first-of-type) line {
-  stroke: white;
+  stroke: var(--color-background);
 }
 
 .columns .column-container .column-title {
   text-anchor: end;
-  fill: black;
+  fill: var(--color-fonts);
   font-size: 16px;
 }
 
 .columns .column-container .column-value {
   font-size: 16px;
+  fill: var(--color-fonts);
 }
 
 .land {
@@ -200,6 +229,7 @@ button {
   opacity: 0;
   position: absolute;
   background-color: white;
+  color: black;
   border: solid;
   border-width: 1px;
   border-radius: 5px;
@@ -238,7 +268,7 @@ td {
 }
 
 .datarow:hover {
-  background: rgba(252, 155, 0, 0.11);
+  background: var(--color-background-hover-row);
 }
 
 tr:nth-child(2n) {
@@ -402,4 +432,55 @@ header {
 .date {
   height: 30px;
   width: 100%;
+  border: 1px solid #d6d6d6;
+  background-color: var(--color-background-input);
+}
+
+#style-toggler-container {
+  margin-left: auto;
+  margin-right: 30px;
+}
+
+.style-toggler-checkbox {
+  opacity: 0;
+  position: absolute;
+}
+
+.style-toggler-label {
+  background-color: #111;
+  border-radius: 50px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+  height: 26px;
+  width: 50px;
+  transform: scale(1.2);
+}
+
+.style-toggler-label .style-toggler-ball {
+  background-color: #fff;
+  border-radius: 50%;
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  height: 22px;
+  width: 22px;
+  transform: translateX(0px);
+  transition: transform 0.2s linear;
+}
+
+.style-toggler-checkbox:checked + .style-toggler-label .style-toggler-ball {
+  transform: translateX(24px);
+}
+
+.fa-moon {
+  color: #f1c40f;
+  padding: 3px;
+}
+
+.fa-sun {
+  color: #f39c12;
+  padding: 3px;
 }
